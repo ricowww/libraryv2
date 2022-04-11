@@ -62,7 +62,7 @@ let bookIdCounter = 0;
 const Books = [];
 
 /* create new book by calling constructor and id counter */
-function promptNewBook() {
+/* function promptNewBook() {
     bookIdCounter = bookIdCounter + 1;
     Books[prompt('Shorthand Name of Book')] = new NewBook(
         prompt('Title'),
@@ -71,7 +71,27 @@ function promptNewBook() {
         prompt('Reading Status'),
         bookIdCounter
     )
+} */
+/* version with intermediate variables for sharing between the constructor and the book card functions */
+function promptNewBook() {
+    bookIdCounter = bookIdCounter + 1;
+    let shortName = prompt('Shorthand Name of Book');
+    let bookTitle = prompt('Title');
+    let bookAuthor = prompt('Author');
+    let bookPages = prompt('Pages');
+    let readStatus = prompt('Reading Status');
+    //call the NewBook constructor//
+    Books[shortName] = new NewBook(
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter
+    )
+    //call the 
 }
+
+
 
 /* trigger create new book with button */
 const Make = document.querySelector("#make")
@@ -107,6 +127,25 @@ Make.addEventListener('click', () =>{
     status button will toggle yes/no
     remove book button will delete the card
 */
+
+/* create attachment point thru #container */
+const container = document.querySelector('#container');
+
+/* create new element in memory; */ 
+/* add a class */
+/* add text */
+/* attach new element to anchor point *////need id of card for deletion purposes, classname of card for styling, paragraph construction to aggregate all details
+function newBookCard(cardShortName){
+    let content = document.createElement('div');
+    content.classList.add('content');
+
+    content.classList.add('content');
+    content.textContent = 'This is the glorious text-content!';
+    container.appendChild(content);
+}
+
+el.setAttribute('id', 'my-id');
+
 
 ///Read button will be attached to card- see "Card will be created..."
 ///Card will be attached to a card container- see "Card will be created..."
