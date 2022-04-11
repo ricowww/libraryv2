@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Page Title</title>
+  <meta charset="UTF-8"/>
+  <style>
+
+    .button {
+      padding: 10px;
+    }
+
+    #containerDiv { 
+      display: grid;
+    }
+    
+    .pixels {
+    border: 1px solid rgb(0, 0, 0);
+    background: blueviolet;
+    }
+    
+    </style>
+
+</head>
+
+<body>
+  
+  <div>
+    <button class='resetButton'>reset</button>
+
+  </div>
+  <div id='containerDiv'></div>
+
+  <script>  //upon click make button delete all child divs
+
+   
+  //GRID GENERATE
+  const ContainerDiv = document.querySelector('#containerDiv');//declare attach point for pixel divs
+
+  function generateGrids(gridSize){
+    for (let i=0; i<(gridSize**2); i++){ //make divs
+    let newDiv = document.createElement('div');//store 1 new div in a variable
+    newDiv.id = 'd' + i; //give it different id each time
+    newDiv.classList = 'pixels'; //common class for manipulation
+    ContainerDiv.appendChild(newDiv);//append them each to attach point
+    ContainerDiv.style.cssText = `grid-template-columns: repeat(${gridSize}, calc(100vmin/${gridSize}));grid-template-rows: repeat(${gridSize}, calc(100vmin/${gridSize}))`;//custom grid style responsive to input size
+      };//repeat grids columns and rows n-number of times as pe user//also use smallest viewport length, divide it by columns and use it as size of pixels
+    };//tested working
+  
+
+  //STARTING GRID = 16x16
+  generateGrids(16);
+
+
+  //REMOVE GRID
+  function removeAllGrids(){
+    while (ContainerDiv.firstChild) { //note, nodes will always replenish its first child whenever its first child is removed
+    ContainerDiv.removeChild(ContainerDiv.firstChild); //remove  first childs in each step
+    }
+  };//tested working
+
+  
+  //INPUT SIZE  
+  function inputSize(){
+    gridSize = 0;//to clear the initial grid
+    gridSize = prompt('Enter a grid size not more than 100');//to insist on a grid <=100
+    if (gridSize >100){ //reject numbers bigger than 100
+      while (gridSize >100){  //keep asking as long as user inputs numbers bigger than 100
+        gridSize = prompt('Enter a grid size not more than 100');
+      }
+    }
+  };//tested working :)
+
+
+ //RECOLOR PIXELS UPON CLICK
+  function sketchActivate(){
+    let pixelDivs = document.querySelectorAll('.pixels');//declare all pixels 
+  
+    pixelDivs.forEach( (div) => { //to apply to all div elements
+    div.addEventListener('mousedown', () =>{ //add trigger to property of all divs
+      document.getElementById(div.id).style.cssText = 'background: black';  //query by div id, and change color to black
+    });
+  })
+  };
+
+  //INITIAL ACTIVATION FOR 16x16
+  sketchActivate();
+  
+
+  //RESET BUTTON
+  const resetButton = document.querySelector('.resetButton'); //attach trigger to reset button
+  resetButton.addEventListener('click', () =>{  
+    removeAllGrids();
+    inputSize();
+    generateGrids(gridSize);
+    sketchActivate();
+  });
+
+  
+//lessons - ${) used to pass arguments into CSS
+//take breaks  //clicking will turn pixels into dark blue
+
+//try out options systematically
+//think outside of the box
+
+  </script>
+  
+</body>
+</html>
