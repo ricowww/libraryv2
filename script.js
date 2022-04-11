@@ -41,7 +41,7 @@
 /* 
    DONE - Html button for the interface -
    DONE - Js button object for the event listener
-   Event listener to trigger prompts, book ID number counter, and object constructor
+   DONE - Event listener to trigger prompts, book ID number counter, and object constructor
    DONE - Object constructor to create an book element inside books
    DONE - Books object to collect all book elements
  */
@@ -73,9 +73,14 @@ function promptNewBook() {
     )
 }
 
+/* trigger create new book with button */
+const Make = document.querySelector("#make")
+Make.addEventListener('click', () =>{
+    promptNewBook();
+    }
+)
 
-
-///User types book details
+///LATER - User types book details
 /* 
     helper for the following, if input is invalid, pop-up again the prompt
         title = any
@@ -85,10 +90,9 @@ function promptNewBook() {
         in library = yes/no (put in library?) dropdown or y/n
  */
 
+///DONE - Computer counts nth number of book created - see "pressing button..."
 
-///Computer counts nth number of book created - see "pressing button..."
-
-///Book is created - see "pressing button...."
+///DONE - Book is created - see "pressing button...."
 
 ///Card will be created based on details
 /* 
@@ -124,55 +128,4 @@ function promptNewBook() {
 
 
 
-
-
-
-
-/*OK function to prompt details */
-/// OK - user types book details using the prompt
-//[DO]add helper or even a name generator, restrict input types
-//[DO]synchronize id with card id
-///a new book variable will be created which will take the details of the book
-///the new book will be added to the lib list
-
-
-
-
-/* OK - steps */
-///OK - button click will pop out prompts
-const Make = document.querySelector("#make")
-Make.addEventListener('click', () =>{
-    promptNewBook();
-    }
-)
-
-///the card creator will make a card based on the book details
-    //everytime a new book is created, we add +1 to a card counter variable
-    //in addition, we also create a new div whose id is based on the card counter
-        //div
-            //id
-            //title
-            //author
-            //pages
-            //reading status
-    //we add values to the elements using queryselector (id + array selectors)
-
-//function CreateBook(){
-    //new div is stored on a constant thru document.createElement('div)
-    //constant is either the book object/property or a object with id common to the book
-    //another div created as a child of the parent div
-
-
-    //DOM to add to parent div
-    //p = title...
-
-
-
-///the card creator will also make removeFromLibrary button, and a readAlready button
-    //
-
-
-///the web styler will put the new card on a///user types book details using the form
-    //header>logo and title
-    //sidebar>new book and remove book
 
