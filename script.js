@@ -72,7 +72,7 @@ const Books = [];
 } 
 */
 
-/* define variables outside the functions to make them accessible via scope */
+/* define variables outside the functions to make them accessible via scope; use only these variables for card creation */
 let shortName = "";
 let bookTitle = "";
 let bookAuthor ="";
@@ -193,15 +193,24 @@ function deleteBook(idForDeletion) {
         return element.bookId;
     }); //get list of IDs of each element 
     let delBookIndex = bookiDList.indexOf(idForDeletion);//get array index of book for deletion
-    Books.splice(delBookIndex, 1)//delete element by the index
+    Books.splice(delBookIndex, 1);//delete element by the index
     
     /* Delete the card */
-    let cardiDList = Container.map(element => {
-        return element.id;
-    }); //get list of IDs of each element 
-    let delCardIndex = cardiDList.indexOf(idForDeletion);//get array index of card for deletion
-    Container.splice(delCardIndex, 1)//delete element by the index
+    let childNode = document.getElementById(idForDeletion);//select and store the childnode by ID which is an object
+    let parentNode = childNode.parentNode;//get and store the parent node which is an object
+    let delCardIndex = Array.prototype.indexOf.call(parentNode.children, childNode);//
+    Container.removeChild(Container.childNodes[delCardIndex]);//delete element by the node index - WORKS!!!
 };
+
+function toggleRead(idForToggle){
+//upon click, get the button id - DO
+    if ()
+//if YES, go the container>card>read-child to the set read status to NO
+//also, change the container>card>read-button> to 'Read'
+//if NO, go the container>card>child set read status to YES
+//also, change the container>card>read-button> to 'Not Yet Read'
+};
+
 
 ///Read button will be attached to card- see "Card will be created..."
 ///Card will be attached to a card container- see "Card will be created..."
