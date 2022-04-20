@@ -3,7 +3,6 @@
 //CODE
 //PRODUCTION
 
-
 /* PLANNING */
 //OUTPUTS
 /* 
@@ -36,7 +35,6 @@
     Card container will have classes which have linked styling
  */
 
-
 ///Pressing button will show the form
 /* 
    DONE - Html button for the interface -
@@ -44,7 +42,7 @@
    DONE - Event listener to trigger prompts, book ID number counter, and object constructor
    DONE - Object constructor to create an book element inside books
    DONE - Books object to collect all book elements
- */
+*/
 
 /* constructor function */
 function NewBook(title, author, pages, readStatus, bookId){
@@ -71,15 +69,24 @@ const Books = [];
         prompt('Reading Status'),
         bookIdCounter
     )
-} */
+} 
+*/
+
+/* define variables outside the functions to make them accessible via scope */
+let shortName = "";
+let bookTitle = "";
+let bookAuthor ="";
+let bookPages = "";
+let readStatus ="";
+
 /* version with intermediate variables for sharing between the constructor and the book card functions */
-function promptNewBook() {
+function promptNewBook() {//get inputs via prompt for easy UI
     bookIdCounter = bookIdCounter + 1;
-    let shortName = prompt('Shorthand Name of Book');
-    let bookTitle = prompt('Title');
-    let bookAuthor = prompt('Author');
-    let bookPages = prompt('Pages');
-    let readStatus = prompt('Reading Status');
+    shortName = prompt('Shorthand Name of Book');
+    bookTitle = prompt('Title');
+    bookAuthor = prompt('Author');
+    bookPages = prompt('Pages');
+    readStatus = prompt('Reading Status');
     //call the NewBook constructor//
     Books[shortName] = new NewBook(
         bookTitle,
@@ -88,15 +95,15 @@ function promptNewBook() {
         readStatus,
         bookIdCounter
     )
-    //call the 
-}
-
-
+    //call the card maker
+    newBookCard();
+}//Tested-Working up to NewBook and newBookCard
 
 /* trigger create new book with button */
 const Make = document.querySelector("#make")
 Make.addEventListener('click', () =>{
     promptNewBook();
+
     }
 )
 
@@ -129,42 +136,82 @@ Make.addEventListener('click', () =>{
 */
 
 /* create attachment point thru #container */
-const container = document.querySelector('#container');
+const Container = document.querySelector('#container');
 
-/* create new element in memory; */ 
-/* add a class */
-/* add text */
-/* attach new element to anchor point *////need id of card for deletion purposes, classname of card for styling, paragraph construction to aggregate all details
-function newBookCard(cardShortName){
-    let content = document.createElement('div');
-    content.classList.add('content');
+/* Create book cards in html using DOM */
+ function newBookCard(){
+    let newDivInMem = document.createElement('div');//book card is a new div in memory, variable is recyclable
+    newDivInMem.classList.add('bookCard');//book card class for formatting purposes
+    newDivInMem.id = bookIdCounter; //book card id equal to book ID
+    /* Title child for the book card */
+    let titleInMem = document.createElement('h1');//book card child is a new h1 in memory, variable is recyclable
+    titleInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    titleInMem.textContent = bookTitle; //add content
+    /* Author child for the book card */
+    let authorInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    authorInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    authorInMem.textContent = bookAuthor; //add content
+    /* Pages child for the book card */
+    let pagesInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    pagesInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    pagesInMem.textContent = `${bookPages} pages`; //add content
+    /* Status child for the book card */
+    let readStatusInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    readStatusInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    readStatusInMem.textContent = `Read: ${readStatus}`; //add content
+    /* Append a delete button */
+    let deleteButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
+    deleteButton.id = bookIdCounter; //book card id equal to book ID
+    deleteButton.classList.add('delete');//delete child class for formatting purposes
+        //declare button as an object in DOM
+        //id-based event listener
+        //function to delete book DOM object and book array element
 
-    content.classList.add('content');
-    content.textContent = 'This is the glorious text-content!';
-    container.appendChild(content);
-}
+    /* Append a read/unread button */
+        //declare button
+        //give an id
+        //id-based event listener
+        //function to change book read/unread status
+    /* Append childs to book card */
+    newDivInMem.appendChild(titleInMem); //attach child to div parent
+    newDivInMem.appendChild(authorInMem); //attach child to div parent
+    newDivInMem.appendChild(pagesInMem); //attach child to div parent
+    newDivInMem.appendChild(readStatusInMem); //attach child to div parent
+        //attach delete button to div parent
+        //attach read button to div parent
 
-el.setAttribute('id', 'my-id');
+    /* Append book card to container */
+    Container.appendChild(newDivInMem); //attach child to div parent
+    
+}//code is working but was manually added to the call function 
 
+///Delete book element, accessed when book card is in existence
+function deleteBook(idForDeletion) {
+    
+    /* Delete the data WORKS! */
+    let bookiDList = Books.map(element => {
+        return element.bookId;
+    }); //get list of IDs of each element 
+    let delBookIndex = bookiDList.indexOf(idForDeletion);//get array index of book for deletion
+    Books.splice(delBookIndex, 1)//delete element by the index
+    
+    /* Delete the card */
+    let cardiDList = Container.map(element => {
+        return element.id;
+    }); //get list of IDs of each element 
+    let delCardIndex = cardiDList.indexOf(idForDeletion);//get array index of card for deletion
+    Container.splice(delCardIndex, 1)//delete element by the index
+};
 
 ///Read button will be attached to card- see "Card will be created..."
 ///Card will be attached to a card container- see "Card will be created..."
-    
 ///Card container will have classes which have linked styling
 /* 
-    dashboard boilerplate    
-    container will be a grid
-
+    structure is as follows: 
+        div#container> div.bookCard>
+            h1
+            p
+    div#container is a grid with at least 1 column,
+        infinite rows
+    bookCards have at least 200rem?px? width plus the extra space
 */
-
-
-
-
-
-
-
-
-
-
-
-
