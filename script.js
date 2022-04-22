@@ -202,14 +202,44 @@ function deleteBook(idForDeletion) {
     Container.removeChild(Container.childNodes[delCardIndex]);//delete element by the node index - WORKS!!!
 };
 
+
+
+
+   //flip its read status; and flip its button text; and end the loop
+    //otherwise, do nothing
 function toggleRead(idForToggle){
-//upon click, get the button id - DO
-    if ()
+    for (let key in Books){//run on all elements in Book array
+        if(Books[key].bookId == idForToggle){//if the element has book id equal to the target id,
+            if(Books[key].readStatus == 'yes'){//flip its read status WORKS!!! 
+                Books[key].readStatus = 'no';
+                //
+                //flip also button text
+            } else {
+                Books[key].readStatus = 'yes';
+                //flip also button text
+            };
+            
+
+        };
+    };
+
+};
+
+//read the reading status
 //if YES, go the container>card>read-child to the set read status to NO
 //also, change the container>card>read-button> to 'Read'
 //if NO, go the container>card>child set read status to YES
 //also, change the container>card>read-button> to 'Not Yet Read'
-};
+
+
+
+
+//upon click, get the button id - DO
+/* trigger function */
+/* myButton.onclick = function() {
+    setUserName();
+  } */
+
 
 
 ///Read button will be attached to card- see "Card will be created..."
