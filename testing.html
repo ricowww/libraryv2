@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Library Catalogue</title>
+<style>
+    /* DO - grid styling */
+</style>
+</head>
+<body>
+    <button id="make">New Book!</button><!-- Makes book -->
+    <div id="container"></div><!-- Hold book cards for display -->
+<script>
+
+//Variables and constants
+const Books = []; //contains books created
+const Container = document.querySelector('#container');//create attachment point for cards
+const ButtonsContainer = [];//container to hold all buttons
+let bookIdCounter = 0; //counts books created
+let shortName = "";//temporarily hold data when making a new book etc.
+let bookTitle = "";//temporarily hold title input
+let bookAuthor = "";//temporarily hold author input
+let bookPages = "";//temporarily hold pages input
+let readStatus ="";//temporarily hold readstatus input
+
+//Makes books as objects using prototype constructor
+function NewBook(title, author, pages, readStatus, bookId){
+    this.title = title //title prototype = title var etc.
+    this.author = author
+    this.pages = pages
+    this.readStatus = readStatus
+    this.bookId = bookId
+}
+
+//Creates book objects from prompt inputs
+function promptNewBook() {
+    bookIdCounter = bookIdCounter + 1;//as ID
+    shortName = prompt('Shorthand Name of Book');
+    bookTitle = prompt('Title');
+    bookAuthor = prompt('Author');
+    bookPages = prompt('Pages');
+    readStatus = prompt('Reading Status');
+}
+
+
+//Deletes book card using node deletion ?manual call deletes only the card ?passing of ID from button may not be working
+function deleteBookCard(idForDeletion) {
+    /* Delete the card OK */
+    let childNode = document.getElementById(idForDeletion);//select and store the childnode by ID which is an object
+    let parentNode = childNode.parentNode;//get and store the parent node which is an object
+    let delCardIndex = Array.prototype.indexOf.call(parentNode.children, childNode);//
+    Container.removeChild(Container.childNodes[delCardIndex]);//*Do this later, container is weird
+};
+
+//Delete book data using for-in and delete property command, note properties =/= array
+function deleteBookData(idForDeletion){
+    for (let property in Books) {
+        if((Books[property])['bookId'] == idForDeletion){
+            delete Books[property];
+        } else {};
+    };
+};
+
+
+//Changes read status of book card using element id
+function toggleRead(idForToggle){
+    for (let key in Books){//run on all elements in Book array
+        if(Books[key].bookId == idForToggle){//if the element has book id equal to the target id,
+            if(Books[key].readStatus == 'yes'){ 
+                Books[key].readStatus = 'no';//flip its read status WORKS!!!
+            } else {
+                Books[key].readStatus = 'yes';
+                //flip also button text
+            };
+        };
+    };
+};
+
+//Creates book cards in html using DOM
+function newBookCard(){
+    /* Main card */
+    let newDivInMem = document.createElement('div');//book card is a new div in memory, variable is recyclable
+    newDivInMem.classList.add('bookCard');//book card class for formatting purposes
+    newDivInMem.id = bookIdCounter; //book card id equal to book ID
+
+    /* Title child for the book card */
+    let titleInMem = document.createElement('h1');//book card child is a new h1 in memory, variable is recyclable
+    titleInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    titleInMem.textContent = bookTitle; //add content
+
+    /* Author child for the book card */
+    let authorInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    authorInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    authorInMem.textContent = bookAuthor; //add content
+
+    /* Pages child for the book card */
+    let pagesInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    pagesInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    pagesInMem.textContent = `${bookPages} pages`; //add content
+
+    /* Status child for the book card */
+    let readStatusInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    readStatusInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    readStatusInMem.textContent = `Read: ${readStatus}`; //add content
+
+    /* Append a delete button */
+    let deleteButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
+    deleteButton.id = bookIdCounter; //book card id equal to delete + book ID
+    deleteButton.classList.add('delete');//delete child class for formatting purposes
+    deleteButton.textContent = 'Delete'; //add content
+
+    /* Append a removeread button */
+    let readButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
+    readButton.id = bookIdCounter; //book card id equal to book ID
+    readButton.classList.add('read');//read child class for formatting purposes
+    readButton.textContent = 'Read'; //add content
+
+    /* Append childs to book card */
+    newDivInMem.appendChild(titleInMem); //attach child to div parent
+    newDivInMem.appendChild(authorInMem); //attach child to div parent
+    newDivInMem.appendChild(pagesInMem); //attach child to div parent
+    newDivInMem.appendChild(readStatusInMem); //attach child to div parent
+    newDivInMem.appendChild(deleteButton); //attach child to div parent
+    newDivInMem.appendChild(readButton); //attach child to div parent
+
+    /* Append book card to container */
+    Container.appendChild(newDivInMem); //attach child to div parent
+
+    /* Add triggers to delete button */
+
+    ButtonsContainer[bookIdCounter] = document.getElementById(bookIdCounter);//declare button as DOM named as "delete[insert id]"
+    ButtonsContainer[bookIdCounter].addEventListener('click', (e) =>{
+        alert(e.target).id;
+        let idTemp = (e.target).id;
+        deleteBookCard(idTemp);
+        deleteBookCard(idTemp);
+        }
+    );
+}
+
+//Trigger to create book and card
+const Make = document.querySelector("#make")
+Make.addEventListener('click', () =>{
+    promptNewBook();// prompt for inputs
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+    }
+)
+
+</script>
+</body>
+</html>
