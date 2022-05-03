@@ -61,7 +61,8 @@ function deleteBookData(idForDeletion){
             delete Books[property];
         } else {};
     };
-};//works
+};//works--alert(q.slice(2));
+
 
 
 //Changes read status of book card using element id
@@ -107,13 +108,13 @@ function newBookCard(){
 
     /* Append a delete button */
     let deleteButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
-    deleteButton.id = bookIdCounter; //book card id equal to delete + book ID
+    deleteButton.id = 'del' + bookIdCounter; //book card id equal to delete + book ID
     deleteButton.classList.add('delete');//delete child class for formatting purposes
     deleteButton.textContent = 'Delete'; //add content
 
     /* Append a removeread button */
     let readButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
-    readButton.id = bookIdCounter; //book card id equal to book ID
+    readButton.id = 'rea' + bookIdCounter; //book card id equal to book ID
     readButton.classList.add('read');//read child class for formatting purposes
     readButton.textContent = 'Read'; //add content
 
@@ -129,14 +130,15 @@ function newBookCard(){
     Container.appendChild(newDivInMem); //attach child to div parent
 
     /* Add triggers to delete button */
-    ButtonsContainer[bookIdCounter] = document.getElementById(bookIdCounter);//declare button as DOM named as "delete[insert id]"
-    ButtonsContainer[bookIdCounter].addEventListener('click', (e) =>{
+    ButtonsContainer['del' + bookIdCounter] = document.getElementById('del' + bookIdCounter);//explicitly only define the delete buttons to avoid causing read button to trigger delete
+    ButtonsContainer['del' + bookIdCounter].addEventListener('click', (e) =>{
         alert((e.target).id);//works!
-        let idTemp = (e.target).id;
+        let idTemp = (e.target).id; //
+        idTemp = idTemp.slice(3);
         deleteBookCard(idTemp);
         deleteBookData(idTemp);
         }
-    );
+    );////?????? Clicking includes clicking anywhere
 }
 
 //Trigger to create book and card
