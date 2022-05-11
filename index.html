@@ -4,14 +4,358 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <button id="make">New Book</button>
-    <div id="container"></div>
+    <title>The Library Catalogue</title>
+<style>
+    /* DO - grid styling */
+
+/* remove default spaces */
+* {
+  margin: 0;
+  padding: 0;
+  font-family:Georgia, Cambria, Cochin,  Times, 'Times New Roman', serif;
+}
+
+.main{
+    text-align:center;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background-color: greenyellow;
+
+}
+.header {
+    grid-row: 1;
+    background-color: blueviolet;
+/*     padding: 1rem;
+ */}
+
+.title{
+    font-size: 2rem;
+    padding: 1rem;
+}
+
+.container {
+    grid-row: 2;
+    background-color: rgb(116, 116, 116);
+    display: grid;
+    grid-auto-rows: auto;
+    grid-template-columns: 1fr 1fr;
+}
+
+.bookCard .bookCardChild{
+    background-color:aquamarine;
+    padding: 1rem;
+
+}
+
 
     
-<script src="script.js"></script>
+</style>
+</head>
+<body>
+    <div class="main">
+        <div class="header">
+            <div class="title">Input a book!</div>
+            <button id="make" >New Book!</button>
+        <div id="container" class="container"></div><!-- Hold book cards for display -->
+<script>
+//TODO
+/* 
+[x] clicking anywhere in the card deletes the card and data
+    [x] modify ids
+        [x] del buttons
+        [x] buttons as objects declarations
+        [x] event listeners 
+[x] read button not working
+    [x] read buttons
+    [x] buttons as objects declarations
+    [x] card text as DOM
+    [x] modify read text in function
+    [x] event listeners 
+[x] helper functions
+[] read status gets the correct id, but only changes the latest card - pause
+
+*/
+
+
+//Variables and constants
+const Books = []; //contains books created
+const Container = document.querySelector('#container');//create attachment point for cards
+const ButtonsContainer = [];//container to hold all buttons
+let bookIdCounter = 0; //counts books created// start at 6 to account for six existing books
+let shortName = "";//temporarily hold data when making a new book etc.
+let bookTitle = "";//temporarily hold title input
+let bookAuthor = "";//temporarily hold author input
+let bookPages = "";//temporarily hold pages input
+let readStatus ="";//temporarily hold readstatus input
+
+//Makes books as objects using prototype constructor
+function NewBook(title, author, pages, readStatus, bookId){
+    this.title = title //title prototype = title var etc.
+    this.author = author
+    this.pages = pages
+    this.readStatus = readStatus
+    this.bookId = bookId
+}
+
+//Creates book objects from prompt inputs
+function promptNewBook() {
+    //reset variables first
+    shortName = "";//temporarily hold data when making a new book etc.
+    bookTitle = "";//temporarily hold title input
+    bookAuthor = "";//temporarily hold author input
+    bookPages = 0;//temporarily hold pages input
+    readStatus = "";//temporarily hold readstatus input
+
+    //prompt with helpers
+    bookIdCounter = bookIdCounter + 1;//as ID
+    while(shortName == ''){
+        shortName = prompt('Shorthand Name of Book');//only accept non-empty inputs
+    };
+    while(bookTitle == ''){
+        bookTitle = prompt('Title');//only accept non-empty inputs
+    };
+    while(bookAuthor == ''){
+        bookAuthor = prompt('Author');//only accept non-empty inputs
+    };
+    while(bookPages<=0){
+        bookPages = prompt('Pages');//only accept non-zero integer inputs though strings work, :(
+    };
+    /* while(!(readStatus=='yes') && !(readStatus=='no')){ //only accept yes or no
+        readStatus = prompt('Reading Status');
+    }    */
+    while(!(readStatus=='yes' || readStatus=='no')){ //if yes or no, true becomes false and code stops
+        readStatus = prompt('Reading Status');
+    }   
+}
+
+
+//Deletes book card using node deletion ?manual call deletes only the card ?passing of ID from button may not be working
+function deleteBookCard(idForDeletion) {
+    /* Delete the card OK */
+    let childNode = document.getElementById(idForDeletion);//select and store the childnode by ID which is an object
+    let parentNode = childNode.parentNode;//get and store the parent node which is an object
+    let delCardIndex = Array.prototype.indexOf.call(parentNode.children, childNode);//
+    Container.removeChild(Container.childNodes[delCardIndex]);//*Do this later, container is weird
+};//works
+
+//Delete book data using for-in and delete property command, note properties =/= array
+function deleteBookData(idForDeletion){
+    for (let property in Books) {
+        if((Books[property])['bookId'] == idForDeletion){
+            delete Books[property];
+        } else {};
+    };
+};//works
+
+
+//Changes read status of book card using element id
+function toggleRead(idForToggle){
+    for (let key in Books){//run on all elements in Book array
+        if(Books[key].bookId == idForToggle){//if the element has book id equal to the target id,
+            alert('toggling this book ' + Books[key].bookId);
+            if(Books[key].readStatus == 'yes'){ 
+                alert(Books[key].readStatus);//checker
+                Books[key].readStatus = 'no';//flip its read status data - WORKS!!!
+                (ButtonsContainer['rst'+ bookIdCounter]).textContent = 'Read: ' + Books[key].readStatus; //update read stat text card-OK!!!
+                alert(Books[key].readStatus);//checker
+            } else {
+                Books[key].readStatus = 'yes';
+                (ButtonsContainer['rst'+ bookIdCounter]).textContent = 'Read: ' + Books[key].readStatus; //update read stat text card-OK!!!
+                alert(Books[key].readStatus);//checker
+                //flip also button text -OK!!!
+            };
+        };
+    };
+};
+
+//Creates book cards in html using DOM
+function newBookCard(){
+    /* Main card */
+    let newDivInMem = document.createElement('div');//book card is a new div in memory, variable is recyclable
+    newDivInMem.classList.add('bookCard');//book card class for formatting purposes
+    newDivInMem.id = bookIdCounter; //book card id equal to book ID
+
+    /* Title child for the book card */
+    let titleInMem = document.createElement('h1');//book card child is a new h1 in memory, variable is recyclable
+    titleInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    titleInMem.textContent = bookTitle; //add content
+
+    /* Author child for the book card */
+    let authorInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    authorInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    authorInMem.textContent = bookAuthor; //add content
+
+    /* Pages child for the book card */
+    let pagesInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    pagesInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    pagesInMem.textContent = `${bookPages} pages`; //add content
+    
+
+    /* Status child for the book card */
+    let readStatusInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
+    readStatusInMem.classList.add('bookCardChild');//book card child class for formatting purposes
+    readStatusInMem.textContent = `Read: ${readStatus}`; //add content
+    readStatusInMem.id = 'rst'+ bookIdCounter; //id for card read status text =  id rst1
+    alert(readStatusInMem.id); //checker
+
+
+    /* Append a delete button */
+    let deleteButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
+    deleteButton.id = 'del'+ bookIdCounter; //book card id equal to delete + book ID -OK!
+    deleteButton.classList.add('delete');//delete child class for formatting purposes
+    deleteButton.textContent = 'Delete'; //add content
+
+    /* Append a removeread button */
+    let readButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
+    readButton.id = 'tgr' + bookIdCounter; //book card id equal to tgr + book ID
+    readButton.classList.add('read');//read child class for formatting purposes ok!
+    readButton.textContent = 'Read'; //add content
+
+    /* Append childs to book card */
+    newDivInMem.appendChild(titleInMem); //attach child to div parent
+    newDivInMem.appendChild(authorInMem); //attach child to div parent
+    newDivInMem.appendChild(pagesInMem); //attach child to div parent
+    newDivInMem.appendChild(readStatusInMem); //attach child to div parent
+    newDivInMem.appendChild(deleteButton); //attach child to div parent
+    newDivInMem.appendChild(readButton); //attach child to div parent
+
+    /* Append book card to container */
+    Container.appendChild(newDivInMem); //attach child to div parent
+
+    /* Declare read status text as DOM for manipulation, need to be done after appending for access */
+    ButtonsContainer['rst'+ bookIdCounter] = document.getElementById('rst'+ bookIdCounter); //declare read status text as object
+
+    /* Add triggers to delete button */
+    ButtonsContainer['del'+ bookIdCounter] = document.getElementById('del'+ bookIdCounter);//name DOM object as delX
+    ButtonsContainer['del'+ bookIdCounter].addEventListener('click', (e) =>{ //event listener to DOM
+        alert((e.target).id);//checker OK!
+        let idTempDel = (e.target).id; //temporary to store ID
+        alert(idTempDel); //checker OK!
+        idTempDel = idTempDel.slice(3); //reduce "del1" to "1" by removing the first 3 letters
+        deleteBookCard(idTempDel); //delete card
+        deleteBookData(idTempDel); //delete data
+        }
+    );
+
+
+    /* Add triggers to read button */
+    ButtonsContainer['tgr'+ bookIdCounter] = document.getElementById('tgr'+ bookIdCounter);//name DOM object as tgrX
+    ButtonsContainer['tgr'+ bookIdCounter].addEventListener('click', (e) =>{ //event listener to DOM
+        alert((e.target).id);//checker to get id of the clicked object 
+        let idTempTgr = (e.target).id; //temporary to store ID
+        alert(idTempTgr); //checker 
+        idTempTgr = idTempTgr.slice(3); //reduce "tgr1" to "1" by removing the first 3 letters
+        alert(idTempTgr); //checker 
+        toggleRead(idTempTgr); //toggle read card and data
+        }
+    );
+}
+
+
+//Trigger to create book and card
+const Make = document.querySelector("#make")
+Make.addEventListener('click', () =>{
+    promptNewBook();// prompt for inputs
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+    }
+)
+
+/* Default six existing books for formatting and visuals */
+    bookIdCounter = 1; //counts books created// start at 6 to account for six existing books
+    shortName = "q";//temporarily hold data when making a new book etc.
+    bookTitle = "q";//temporarily hold title input
+    bookAuthor = "q";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="yes";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+    bookIdCounter = 2; //counts books created// start at 6 to account for six existing books
+    shortName = "w";//temporarily hold data when making a new book etc.
+    bookTitle = "w";//temporarily hold title input
+    bookAuthor = "w";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="no";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+    bookIdCounter = 3; //counts books created// start at 6 to account for six existing books
+    shortName = "e";//temporarily hold data when making a new book etc.
+    bookTitle = "e";//temporarily hold title input
+    bookAuthor = "e";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="yes";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+    bookIdCounter = 4; //counts books created// start at 6 to account for six existing books
+    shortName = "a";//temporarily hold data when making a new book etc.
+    bookTitle = "a";//temporarily hold title input
+    bookAuthor = "a";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="yes";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+    bookIdCounter = 5; //counts books created// start at 6 to account for six existing books
+    shortName = "r";//temporarily hold data when making a new book etc.
+    bookTitle = "r";//temporarily hold title input
+    bookAuthor = "r";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="yes";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+    bookIdCounter = 6; //counts books created// start at 6 to account for six existing books
+    shortName = "t";//temporarily hold data when making a new book etc.
+    bookTitle = "t";//temporarily hold title input
+    bookAuthor = "t";//temporarily hold author input
+    bookPages = "3";//temporarily hold pages input
+    readStatus ="yes";//temporarily hold readstatus input
+    Books[shortName] = new NewBook(//new object as an element by calling constructor based on above inputs
+        bookTitle,
+        bookAuthor,
+        bookPages,
+        readStatus,
+        bookIdCounter);
+    newBookCard();//call the card makers
+
+
+
+/* 
+[] gridding
+[] CSS */
+</script>
 </body>
 </html>
