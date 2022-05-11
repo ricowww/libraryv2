@@ -15,20 +15,8 @@
 <script>
 //TODO
 /* 
-[x] clicking anywhere in the card deletes the card and data
-    [x] modify ids
-        [x] del buttons
-        [x] buttons as objects declarations
-        [x] event listeners 
-[x] read button not working
-    [x] read buttons
-    [x] buttons as objects declarations
-    [x] card text as DOM
-    [x] modify read text in function
-    [x] event listeners 
-[x] helper functions
-[] read status gets the correct id, but only changes the latest card
-
+[] clicking anywhere in the card deletes the card and data
+[] 
 */
 
 
@@ -54,33 +42,12 @@ function NewBook(title, author, pages, readStatus, bookId){
 
 //Creates book objects from prompt inputs
 function promptNewBook() {
-    //reset variables first
-    shortName = "";//temporarily hold data when making a new book etc.
-    bookTitle = "";//temporarily hold title input
-    bookAuthor = "";//temporarily hold author input
-    bookPages = 0;//temporarily hold pages input
-    readStatus = "";//temporarily hold readstatus input
-
-    //prompt with helpers
     bookIdCounter = bookIdCounter + 1;//as ID
-    while(shortName == ''){
-        shortName = prompt('Shorthand Name of Book');//only accept non-empty inputs
-    };
-    while(bookTitle == ''){
-        bookTitle = prompt('Title');//only accept non-empty inputs
-    };
-    while(bookAuthor == ''){
-        bookAuthor = prompt('Author');//only accept non-empty inputs
-    };
-    while(bookPages<=0){
-        bookPages = prompt('Pages');//only accept non-zero integer inputs though strings work, :(
-    };
-    /* while(!(readStatus=='yes') && !(readStatus=='no')){ //only accept yes or no
-        readStatus = prompt('Reading Status');
-    }    */
-    while(!(readStatus=='yes' || readStatus=='no')){ //if yes or no, true becomes false and code stops
-        readStatus = prompt('Reading Status');
-    }   
+    shortName = prompt('Shorthand Name of Book');
+    bookTitle = prompt('Title');
+    bookAuthor = prompt('Author');
+    bookPages = prompt('Pages');
+    readStatus = prompt('Reading Status');
 }
 
 
@@ -108,15 +75,10 @@ function toggleRead(idForToggle){
     for (let key in Books){//run on all elements in Book array
         if(Books[key].bookId == idForToggle){//if the element has book id equal to the target id,
             if(Books[key].readStatus == 'yes'){ 
-                alert(Books[key].readStatus);//checker
-                Books[key].readStatus = 'no';//flip its read status data - WORKS!!!
-                (ButtonsContainer['rst'+ bookIdCounter]).textContent = Books[key].readStatus; //update read stat text card-OK!!!
-                alert(Books[key].readStatus);//checker
+                Books[key].readStatus = 'no';//flip its read status WORKS!!!
             } else {
                 Books[key].readStatus = 'yes';
-                (ButtonsContainer['rst'+ bookIdCounter]).textContent = Books[key].readStatus; //update read stat text card-OK!!!
-                alert(Books[key].readStatus);//checker
-                //flip also button text -OK!!!
+                //flip also button text
             };
         };
     };
@@ -143,26 +105,22 @@ function newBookCard(){
     let pagesInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
     pagesInMem.classList.add('bookCardChild');//book card child class for formatting purposes
     pagesInMem.textContent = `${bookPages} pages`; //add content
-    
 
     /* Status child for the book card */
     let readStatusInMem = document.createElement('p');//book card child is a new p in memory, variable is recyclable
     readStatusInMem.classList.add('bookCardChild');//book card child class for formatting purposes
     readStatusInMem.textContent = `Read: ${readStatus}`; //add content
-    readStatusInMem.id = 'rst'+ bookIdCounter; //id for card read status text =  id rst1
-    alert(readStatusInMem.id); //checker
-
 
     /* Append a delete button */
     let deleteButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
-    deleteButton.id = 'del'+ bookIdCounter; //book card id equal to delete + book ID -OK!
+    deleteButton.id = bookIdCounter; //book card id equal to delete + book ID
     deleteButton.classList.add('delete');//delete child class for formatting purposes
     deleteButton.textContent = 'Delete'; //add content
 
     /* Append a removeread button */
     let readButton = document.createElement('button');//deleteButton child is a new button in memory, variable is recyclable
-    readButton.id = 'tgr' + bookIdCounter; //book card id equal to tgr + book ID
-    readButton.classList.add('read');//read child class for formatting purposes ok!
+    readButton.id = bookIdCounter; //book card id equal to book ID
+    readButton.classList.add('read');//read child class for formatting purposes
     readButton.textContent = 'Read'; //add content
 
     /* Append childs to book card */
@@ -176,34 +134,16 @@ function newBookCard(){
     /* Append book card to container */
     Container.appendChild(newDivInMem); //attach child to div parent
 
-    /* Declare read status text as DOM for manipulation, need to be done after appending for access */
-    ButtonsContainer['rst'+ bookIdCounter] = document.getElementById('rst'+ bookIdCounter); //declare read status text as object
-
     /* Add triggers to delete button */
-    ButtonsContainer['del'+ bookIdCounter] = document.getElementById('del'+ bookIdCounter);//name DOM object as delX
-    ButtonsContainer['del'+ bookIdCounter].addEventListener('click', (e) =>{ //event listener to DOM
-        alert((e.target).id);//checker OK!
-        let idTempDel = (e.target).id; //temporary to store ID
-        alert(idTempDel); //checker OK!
-        idTempDel = idTempDel.slice(3); //reduce "del1" to "1" by removing the first 3 letters
-        deleteBookCard(idTempDel); //delete card
-        deleteBookData(idTempDel); //delete data
-        }
-    );
-
-
-    /* Add triggers to read button */
-    ButtonsContainer['tgr'+ bookIdCounter] = document.getElementById('tgr'+ bookIdCounter);//name DOM object as tgrX
-    ButtonsContainer['tgr'+ bookIdCounter].addEventListener('click', (e) =>{ //event listener to DOM
-        alert((e.target).id);//checker to get id of the clicked object 
-        let idTempTgr = (e.target).id; //temporary to store ID
-        alert(idTempTgr); //checker 
-        idTempTgr = idTempTgr.slice(3); //reduce "tgr1" to "1" by removing the first 3 letters
-        toggleRead(idTempTgr); //toggle read card and data
+    ButtonsContainer[bookIdCounter] = document.getElementById(bookIdCounter);//declare button as DOM named as "delete[insert id]"
+    ButtonsContainer[bookIdCounter].addEventListener('click', (e) =>{
+        alert((e.target).id);//works!
+        let idTemp = (e.target).id;
+        deleteBookCard(idTemp);
+        deleteBookData(idTemp);
         }
     );
 }
-
 
 //Trigger to create book and card
 const Make = document.querySelector("#make")
@@ -219,10 +159,6 @@ Make.addEventListener('click', () =>{
     }
 )
 
-
-/* 
-[] gridding
-[] CSS */
 </script>
 </body>
 </html>
